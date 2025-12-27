@@ -11,11 +11,15 @@ class Translator{
 
     //добавление слова
     public void addWord(String original, String translation){
-        if(original.isEmpty() || translation.isEmpty()) {
+
+        if(original.isBlank() || translation.isBlank()) {
             System.out.println("Слово быть пустым не может!");
             return;
         }
-
+        if (!hasNums(original, translation)){
+            System.out.println("Цифр быть не может!");
+            return;
+        }
         if(hasWord(original, translation)){
             System.out.println("Такое слово уже есть!");
         }
@@ -45,6 +49,21 @@ class Translator{
         return false;
     }
 
+    //Проверка, что есть числа в строке
+    public boolean hasNums(String original, String translation){
+        for (int i = 0; i < original.length(); i++) {
+            if ('0' <= original.charAt(i) && original.charAt(i) <= '9') {
+                return false;
+            }
+        }
+        for (int i = 0; i < translation.length(); i++) {
+            if ('0' <= translation.charAt(i) && translation.charAt(i) <= '9') {
+                return false;
+            }
+        }
+        return true;
+    }
+
     //получение всех слов
     public void showWords(){
         if(this.words.isEmpty()) System.out.println("Словарь пуст!");
@@ -59,19 +78,19 @@ class Translator{
     public String Translate(String input, TranslationMode mode){
         for (Word word : words){
             if(mode == TranslationMode.RU_TO_FOREIGN){
-                if(input.equalsIgnoreCase(word.getOriginal())){
-                    return word.getTranslation();
+                if(input.equalsIgnoreCase(word.getTranslation())){
+                    return word.getOriginal();
                 }
             }
             else {
-                if(input.equalsIgnoreCase(word.getTranslation())){
-                    return word.getOriginal();
+                if(input.equalsIgnoreCase(word.getOriginal())){
+                    return word.getTranslation();
                 }
             }
         }
         return "Не найдено!";
     }
 
-    enum TranslationMode { RU_TO_FOREIGN, FOREIGN_TO_RU }
+    public enum TranslationMode { RU_TO_FOREIGN, FOREIGN_TO_RU }
 }
 
