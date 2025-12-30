@@ -2,7 +2,6 @@ package main.java;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -19,13 +18,16 @@ class Translator{
     private ObjectMapper mapper = new ObjectMapper();
     private final File dataFile = new File("vocabulary.json");
 
+    private StatisticManager SM = StatisticManager.getInstance();
+
     public Translator() {
         this.words = new ArrayList<>();
-        mapper.registerModule(new JavaTimeModule());
         mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //System.out.println("Файл словаря: " + dataFile.getAbsolutePath()); путь к словарю
         loadWords();
     }
+
+
 
     //добавление слова
     public void addWord(String original, String translation){
@@ -75,6 +77,7 @@ class Translator{
                     }
                 }
 
+                SM.setTotalWords(words.size());
                 System.out.println("Загружено " + words.size() + " " + CasesOfWords(words.size()));
             }
         }

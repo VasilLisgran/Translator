@@ -2,7 +2,7 @@ package main.java;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+
 
 public class Word {
     //слово

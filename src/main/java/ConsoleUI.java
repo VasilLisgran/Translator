@@ -1,7 +1,6 @@
 package main.java;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 
 import java.io.File;
 import java.util.Scanner;
@@ -10,9 +9,11 @@ public class ConsoleUI {
     public static Scanner scanner = new Scanner(System.in);
 
     private Translator translator;
+    StatisticManager SM = StatisticManager.getInstance();
 
     public ConsoleUI() {
         this.translator = new Translator();
+        this.SM = SM;
     }
 
     public void start() {
@@ -72,6 +73,10 @@ public class ConsoleUI {
                     } else {
                         System.out.println("Неправильный ввод!");
                     }
+                case 5:
+                    System.out.println("Статистика:");
+                    this.SM.ShowStats();
+
             }
         }
 
