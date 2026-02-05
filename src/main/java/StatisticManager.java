@@ -1,8 +1,14 @@
 package main.java;
 
+import java.time.LocalDate;
+import java.util.Objects;
+
 public class StatisticManager {
     private static StatisticManager instance;
     private int totalWords;
+
+    private LocalDate lastDate;
+    private int dailyWordsCount;
 
     private StatisticManager(){
 
@@ -30,5 +36,18 @@ public class StatisticManager {
 
     public void ShowStats(){
         System.out.println(this.totalWords);
+    }
+
+    public void incrementDailyWords(){
+        if(!Objects.equals(lastDate, LocalDate.now())){
+            resetDailyStats();
+        }
+        this.dailyWordsCount++;
+    }
+
+    public void resetDailyStats(){
+        if (!Objects.equals(lastDate, LocalDate.now())){
+            this.dailyWordsCount = 0;
+        }
     }
 }

@@ -22,6 +22,8 @@ class Translator{
 
     public Translator() {
         this.words = new ArrayList<>();
+
+        //Игнорируем ошибку при десериализации, когда встречается неизвестный тип
         mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //System.out.println("Файл словаря: " + dataFile.getAbsolutePath()); путь к словарю
         loadWords();
@@ -78,6 +80,7 @@ class Translator{
                 }
 
                 SM.setTotalWords(words.size());
+                //Вывод в правильной падежной форме числительного
                 System.out.println("Загружено " + words.size() + " " + CasesOfWords(words.size()));
             }
         }
@@ -93,6 +96,12 @@ class Translator{
         if (number < words.size()){
             words.remove(number);
             System.out.println("Успешное удаление!");
+            try {
+                mapper.writeValue(dataFile, words);
+
+            } catch (IOException e) {
+                System.out.println("Ошибка сохранения: " + e.getMessage());
+            }
         }
         else System.out.println("Некорректный ввод!");
     }
