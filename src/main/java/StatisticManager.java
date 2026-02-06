@@ -1,21 +1,14 @@
 package main.java;
 
 import java.time.LocalDate;
-import java.util.Objects;
 
 public class StatisticManager {
-    private static StatisticManager instance;
-    private int totalWords;
 
-    private LocalDate lastDate;
-    private int dailyWordsCount;
+    private static StatisticManager instance;
+    private StatisticData data;
 
     private StatisticManager(){
-
-    }
-
-    private StatisticManager(int Total){
-        this.totalWords = Total;
+        data = new StatisticData(0, 0, 0, LocalDate.now().toString());
     }
 
     //использую Singletone, так как один глобальный объект,
@@ -27,27 +20,48 @@ public class StatisticManager {
         return instance;
     }
 
-    public int getTotalWords() {
-        return this.totalWords;
-    }
-    public void setTotalWords(int TotalWords){
-        this.totalWords = TotalWords;
-    }
-
-    public void ShowStats(){
-        System.out.println(this.totalWords);
+    //увеличение информации
+    public void recordAdded(){
+        dateCheck();
+        data.setTotalWords(data.getTotalWords() + 1);
+        data.setWordsToday(data.getWordsToday() + 1);
+        data.setWordsThisMonth(data.getWordsThisMonth() + 1);
+        data.setLastDate(LocalDate.now().toString());
     }
 
-    public void incrementDailyWords(){
-        if(!Objects.equals(lastDate, LocalDate.now())){
-            resetDailyStats();
+    //получение данных
+    public StatisticData getData() {
+        return data;
+    }
+
+    //замена данных в синглтоне
+    public void loadData(StatisticData newData){
+        this.data = newData;
+        dateCheck();
+    }
+
+    //проверка даты
+    public void dateCheck(){
+        LocalDate today = LocalDate.now();
+
+        LocalDate lastDate = LocalDate.parse(data.getLastDate());
+
+        if(!today.equals(lastDate)){
+            data.setWordsToday(0);
+            data.setLastDate(today.toString());
+            if(today.getMonth() != lastDate.getMonth()){
+                data.setWordsThisMonth(0);
+            }
         }
-        this.dailyWordsCount++;
     }
 
-    public void resetDailyStats(){
-        if (!Objects.equals(lastDate, LocalDate.now())){
-            this.dailyWordsCount = 0;
-        }
+    public void showStats() {
+        dateCheck(); // Всегда актуальные данные
+
+        System.out.println("СТАТИСТИКА");
+        System.out.println("Всего слов: " + data.getTotalWords());
+        System.out.println("Добавлено сегодня: " + data.getWordsToday());
+        System.out.println("Добавлено в этом месяце: " + data.getWordsThisMonth());
+        System.out.println("Последнее обновление: " + data.getLastDate());
     }
 }

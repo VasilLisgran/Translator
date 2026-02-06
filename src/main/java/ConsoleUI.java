@@ -159,7 +159,7 @@ public class ConsoleUI {
 
     private void handle_Statistic(){
         System.out.println("Статистика:");
-        this.SM.ShowStats();
+        this.SM.showStats();
     }
 
     private void showBackOptionAndWait() {

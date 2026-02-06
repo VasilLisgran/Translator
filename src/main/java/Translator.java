@@ -16,6 +16,8 @@ class Translator{
     List<Word> words = new ArrayList<>(); //список слов
     private int nextId = 1;
     private ObjectMapper mapper = new ObjectMapper();
+
+    private final File statsFile = new File("statistics.json");
     private final File dataFile = new File("vocabulary.json");
 
     private StatisticManager SM = StatisticManager.getInstance();
@@ -27,9 +29,8 @@ class Translator{
         mapper.configure(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         //System.out.println("Файл словаря: " + dataFile.getAbsolutePath()); путь к словарю
         loadWords();
+        loadStatistics();
     }
-
-
 
     //добавление слова
     public void addWord(String original, String translation){
@@ -52,6 +53,9 @@ class Translator{
 
             saveWord();
 
+            SM.recordAdded();
+            saveStatistics();
+
             System.out.println("Слово успешно добавлено!");
         }
     }
@@ -63,6 +67,30 @@ class Translator{
 
         } catch (IOException e) {
             System.out.println("Ошибка сохранения: " + e.getMessage());
+        }
+    }
+
+    private void saveStatistics(){
+        try {
+            StatisticData data = SM.getData();
+            mapper.writeValue(statsFile, data);
+        }
+        catch (IOException e){
+            System.out.println("Ошибка сохранения!");
+        }
+    }
+
+    private void loadStatistics(){
+        try {
+            if(statsFile.exists() && statsFile.length() > 0){
+                StatisticData loadedData = mapper.readValue(statsFile, StatisticData.class);
+
+                SM.loadData(loadedData);
+                System.out.println("Статистика загружена");
+            }
+        }
+        catch (IOException e){
+            System.out.println("Ошибка загрузки статистики!");
         }
     }
 
@@ -79,7 +107,7 @@ class Translator{
                     }
                 }
 
-                SM.setTotalWords(words.size());
+                SM.getData().setTotalWords(words.size());
                 //Вывод в правильной падежной форме числительного
                 System.out.println("Загружено " + words.size() + " " + CasesOfWords(words.size()));
             }
@@ -98,6 +126,7 @@ class Translator{
             System.out.println("Успешное удаление!");
             try {
                 mapper.writeValue(dataFile, words);
+                saveStatistics();
 
             } catch (IOException e) {
                 System.out.println("Ошибка сохранения: " + e.getMessage());
